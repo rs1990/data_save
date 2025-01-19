@@ -1,0 +1,35 @@
+couldnt run 
+
+We use QtCreator as an IDE for Linux development on Ubuntu
+Note: QtCreator is presently configured to use the V4L2 backend by default
+go to 
+
+mav@mav:~/workspaces/src/Libsense/librealsense$ 
+
+sudo scripts/install_qt.sh (we also need qmake from the full qt5 distribution)
+all.pro contains librealsense and all example applications
+From the QtCreator top menu: Clean => Run QMake => Build
+Built QtCreator projects will be placed into ./bin/debug or ./bin/release
+We also provide a cmake file if you'd prefer to use your own favourite text editor
+mkdir build
+cd build
+cmake ..
+make && sudo make install
+The library will be installed in /usr/local/lib and header files in /usr/local/include.
+Note: If you would also like to compile the code examples use:
+cmake .. -DBUILD_EXAMPLES:BOOL=true
+make && sudo make install
+The example executables will build into ./examples and install into /usr/local/bin.
+
+
+remote: Total 103 (delta 37), reused 34 (delta 34), pack-reused 62 (from 1)
+Receiving objects: 100% (103/103), 561.96 KiB | 5.02 MiB/s, done.
+Resolving deltas: 100% (58/58), done.
+mav@mav:~/workspaces/src$ cd face-mask-detection
+python3 -m pip install -r requirements.txt
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: numpy in /home/mav/.local/lib/python3.10/site-packages (from -r requirements.txt (line 1)) (1.26.4)
+Requirement already satisfied: scipy in /usr/lib/python3/dist-packages (from -r requirements.txt (line 2)) (1.8.0)
+Requirement already satisfied: Pillow in /home/mav/.local/lib/python3.10/site-packages (from -r requirements.txt (line 3)) (6.2.2)
+mav@mav:~/workspaces/src/face-mask-detection$ 
+
