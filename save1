@@ -1,0 +1,292 @@
+To run nanoowl
+https://github.com/NVIDIA-AI-IOT/ROS2-NanoOWL?tab=readme-ov-file - all steps
+
+
+terminal 1 : 
+cd ${ISAAC_ROS_WS}
+ros2 run image_publisher image_publisher_node src/nanoowl/assets/owl_glove_small.jpg --ros-args --remap /image_raw:=/input_image
+
+expected result : 
+[INFO] [1731684926.904499848] [ImagePublisher]: Reset filename as 'src/nanoowl/assets/owl_glove_small.jpg'
+[INFO] [1731684926.904821961] [ImagePublisher]: File name for publishing image is : src/nanoowl/assets/owl_glove_small.jpg
+[INFO] [1731684926.912560818] [ImagePublisher]: Flip horizontal image is : false
+[INFO] [1731684926.912640690] [ImagePublisher]: Flip flip_vertical image is : false
+[INFO] [1731684926.913439827] [ImagePublisher]: no camera_info_url exist
+
+
+
+terminal 2 : ros2 topic pub /input_query std_msgs/String 'data: a person, a box, a forklift'
+
+Expected result : 
+publisher: beginning loop
+publishing #1: std_msgs.msg.String(data='a person, a box, a forklift')
+
+publishing #2: std_msgs.msg.String(data='a person, a box, a forklift')
+
+publishing #3: std_msgs.msg.String(data='a person, a box, a forklift')
+
+publishing #4: std_msgs.msg.String(data='a person, a box, a forklift')
+...
+
+
+terminal 3 :
+
+ros2 launch ros2_nanoowl camera_input_example.launch.py thresholds:=0.1 image_encoder_engine:='src/ROS2-NanoOWL/data/owl_image_encoder_patch32.engine'
+
+Expected result :
+[INFO] [launch]: All log files can be found below /home/mav/.ros/log/2024-11-15-07-30-34-178395-mav-9956
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [cam2image-1]: process started with pid [9957]
+[INFO] [nano_owl_py-2]: process started with pid [9959]
+[nano_owl_py-2] /home/mav/.local/lib/python3.10/site-packages/torchvision/io/image.py:14: UserWarning: Failed to load image Python extension: '/home/mav/.local/lib/python3.10/site-packages/torchvision/image.so: undefined symbol: _ZN5torch3jit17parseSchemaOrNameERKSsb'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
+[nano_owl_py-2]   warn(
+[cam2image-1] [ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1100) open OpenCV | GStreamer warning: Cannot query video position: status=0, value=-1, duration=-1
+[cam2image-1] [INFO] [1731684639.436634654] [cam2image]: Publishing image #1
+[cam2image-1] [INFO] [1731684639.470883279] [cam2image]: Publishing image #2
+[cam2image-1] [INFO] [1731684639.534565299] [cam2image]: Publishing image #3
+[cam2image-1] [INFO] [1731684639.602366298] [cam2image]: Publishing image #4
+
+if you get Package 'ros2_nanoowl' not found: "package 'ros2_nanoowl' not found, searching: ['/opt/ros/humble']"
+run cd ${ISAAC_ROS_WS}
+source install/setup.bash
+ros2 launch ros2_nanoowl camera_input_example.launch.py thresholds:=0.1 image_encoder_engine:='src/ROS2-NanoOWL/data/owl_image_encoder_patch32.engine'
+
+terminal 4 
+ros2 run image_view image_view --ros-args -r image:=/output_image
+
+Expected result :
+[INFO] [1731916175.233455882] [image_view_node]: Using transport "raw
+
+
+
+
+proj 2 
+rosgpt
+
+term 1
+
+cd workspaces/src/rosgpt/
+source install/setup.bash
+ros2 run rosgpt rosgpt
+
+term 2
+
+cd workspaces/src/rosgpt/
+source install/setup.bash
+ros2 run turtlesim turtlesim_node
+
+term 3
+
+cd workspaces/src/rosgpt/
+source install/setup.bash
+ros2 run rosgpt rosgptparser_turtlesim 
+
+term 4
+
+cd workspaces/src/rosgpt/
+source install/setup.bash
+ros2 run rosgpt rosgpt_client_node 
+
+
+openAi API KEY : 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
+
+
+HF Token : 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
+
+nano_llm
+
+
+
+jetson-containers run $(autotag dustynv/nano_llm) \
+  python3 -m nano_llm.chat --api=mlc \
+    --model Obsidian-3B \
+    --max-context-len 256 \
+    --max-new-tokens 32 \
+    --prompt '/data/images/hoover.jpg' \
+    --prompt 'what does the road sign say?' \
+    --prompt 'what kind of environment is it?' \
+    --prompt 'reset' \
+    --prompt '/data/images/lake.jpg' \
+    --prompt 'please describe the scene.' \
+    --prompt 'are there any hazards to be aware of?'
+
+jetson-containers run $(autotag dustynv/nano_llm) \
+  python3 -m nano_llm.chat --api=mlc \
+    --model Efficient-Large-Model/VILA1.5-3b \
+    --max-context-len 256 \
+    --max-new-tokens 32 \
+    --prompt '/data/images/hoover.jpg' \
+    --prompt 'what does the road sign say?' \
+    --prompt 'what kind of environment is it?' \
+    --prompt 'reset' \
+    --prompt '/data/images/lake.jpg' \
+    --prompt 'please describe the scene.' \
+    --prompt 'are there any hazards to be aware of?'
+    
+    
+    jetson-containers run $(autotag dustynv/nano_llm)   python3 -m nano_llm.agents.video_query --api=mlc     --model Efficient-Large-Model/VILA-2.7b     --max-context-len 256     --max-new-tokens 32     --video-input /dev/video0     --video-output webrtc://@:8554/output
+
+
+
+
+
+
+
+
+
+
+
+bashrc
+
+
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+
+# export PATH="/home/mav/anaconda3/bin:$PATH"  # commented out by conda initialize  # commented out by conda initialize
+
+export ISAAC_ROS_WS=/home/mav/workspaces/isaac_ros-dev/
+
+#conda activate
+#>>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+#__conda_setup="$('/home/mav/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+#if [ $? -eq 0 ]; then
+#    eval "$__conda_setup"
+#else
+#    if [ -f "/home/mav/anaconda3/etc/profile.d/conda.sh" ]; then
+#        . "/home/mav/anaconda3/etc/profile.d/conda.sh"
+#    else
+#        export PATH="/home/mav/anaconda3/bin:$PATH"
+#    fi
+#fi
+#unset __conda_setup
+# <<< conda initialize <<<
+#conda deactivate
+
+export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64{LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export OPENAI_API_KEY=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
+
+source /opt/ros/humble/setup.bash
+
+
+alias agent_studio="jetson-containers run --env HUGGINGFACE_TOKEN=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 \
+  $(autotag dustynv/nano_llm) \
+    python3 -m nano_llm.studio && xdg-open https://172.17.0.1:8050/" 
+
